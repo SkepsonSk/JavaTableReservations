@@ -2,13 +2,16 @@ package pl.pollub.javatablereservations.entity;
 
 import jakarta.persistence.*;
 import pl.pollub.javatablereservations.memento.TableMemento;
+import pl.pollub.javatablereservations.state.TableState;
+import pl.pollub.javatablereservations.visitor.SynchronizationItem;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitor;
 
 import java.util.UUID;
 
 @Entity(
         name = "tables"
 )
-public class Table {
+public class Table implements SynchronizationItem {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -56,5 +59,10 @@ public class Table {
     public void restoreFromMemento(TableMemento memento) {
         this.seats = memento.getSeats();
         this.status = new Status(memento.getStatus());
+    }
+
+    @Override
+    public void accept(SynchronizationVisitor visitor) {
+        visitor.synchronize(this);
     }
 }

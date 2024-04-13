@@ -11,8 +11,12 @@ import pl.pollub.javatablereservations.entity.Table;
 import pl.pollub.javatablereservations.entity.builder.TableBuilder;
 import pl.pollub.javatablereservations.memento.TableHistory;
 import pl.pollub.javatablereservations.memento.TableMemento;
+import pl.pollub.javatablereservations.observer.TableMonitor;
 import pl.pollub.javatablereservations.repository.StatusRepository;
 import pl.pollub.javatablereservations.repository.TableRepository;
+import pl.pollub.javatablereservations.state.TableClosedState;
+import pl.pollub.javatablereservations.state.TableContext;
+import pl.pollub.javatablereservations.state.TableOpenedState;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +25,8 @@ import java.util.List;
 
 @Service
 public class TableService {
+
+    private final TableMonitor tableMonitor = TableMonitor.getInstance();
 
     private final TableRepository tableRepository;
     private final StatusRepository statusRepository;
@@ -67,6 +73,11 @@ public class TableService {
 
         table.setStatus(openStatus);
         this.tableRepository.save(table);
+        this.tableMonitor.notifyObservers(table);
+
+        TableContext tableContext = TableContext.getContext(table);
+        tableContext.setState(new TableOpenedState());
+        tableContext.requestStateChange();
     }
 
     public void closeTable(ChangeTableDto changeTableDto) {
@@ -76,6 +87,11 @@ public class TableService {
 
         table.setStatus(openStatus);
         this.tableRepository.save(table);
+        this.tableMonitor.notifyObservers(table);
+
+        TableContext tableContext = TableContext.getContext(table);
+        tableContext.setState(new TableClosedState());
+        tableContext.requestStateChange();
     }
 
     public void editTable(UpdateTableDto updateTableDto) {
@@ -85,6 +101,7 @@ public class TableService {
         table.setStatus(new Status(updateTableDto.getStatus()));
 
         this.tableRepository.save(table);
+        this.tableMonitor.notifyObservers(table);
     }
 
     public void createMemento() {

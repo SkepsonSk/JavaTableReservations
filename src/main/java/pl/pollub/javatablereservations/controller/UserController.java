@@ -8,6 +8,8 @@ import pl.pollub.javatablereservations.entity.User;
 import pl.pollub.javatablereservations.iterator.Iterator;
 import pl.pollub.javatablereservations.iterator.UserOrganization;
 import pl.pollub.javatablereservations.service.UserService;
+import pl.pollub.javatablereservations.template.CreateUserActivationService;
+import pl.pollub.javatablereservations.template.UserActivationService;
 
 import java.util.List;
 
@@ -42,6 +44,12 @@ public class UserController {
     @PostMapping(value = "/edit_user")
     public void editUser(@RequestBody CreateUserDto createUserDto) {
         this.userService.saveUser(createUserDto);
+    }
+
+    @PostMapping(value = "/activate_user")
+    public void activateUser(@RequestBody CreateUserDto createUserDto) {
+        UserActivationService activationService = new CreateUserActivationService(this.userService, createUserDto);
+        activationService.activateUser();
     }
 
 }

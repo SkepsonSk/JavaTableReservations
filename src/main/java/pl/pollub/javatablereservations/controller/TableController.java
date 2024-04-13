@@ -8,10 +8,14 @@ import pl.pollub.javatablereservations.dto.UpdateTableDto;
 import pl.pollub.javatablereservations.entity.Table;
 import pl.pollub.javatablereservations.entity.User;
 import pl.pollub.javatablereservations.mediator.UserAccessMediator;
+import pl.pollub.javatablereservations.observer.TableMonitor;
+import pl.pollub.javatablereservations.observer.TableObserver;
 import pl.pollub.javatablereservations.service.AuthService;
 import pl.pollub.javatablereservations.service.TableService;
 import pl.pollub.javatablereservations.service.UserService;
 import pl.pollub.javatablereservations.session.Session;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitor;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitorImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -89,5 +93,18 @@ public class TableController {
     @PostMapping(value = "restore_from_memento")
     public void createMemento(@RequestParam("versionIndex") int versionIndex) {
         this.tableService.restoreFromMemento(versionIndex);
+    }
+
+    @PostMapping(value = "observe_table")
+    public void observeTable(@RequestParam("tableId") UUID tableId) {
+        TableMonitor.getInstance().addObserver(new TableObserver(tableId));
+    }
+
+    @PostMapping(value = "synchronize_tables")
+    public void synchronize() {
+        SynchronizationVisitor visitor = new SynchronizationVisitorImpl();
+        for (Table table : this.tableService.getAllTableList()) {
+            table.accept(visitor);
+        }
     }
 }

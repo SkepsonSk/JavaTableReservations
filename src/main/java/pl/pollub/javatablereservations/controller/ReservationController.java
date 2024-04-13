@@ -6,7 +6,10 @@ import pl.pollub.javatablereservations.Constants;
 import pl.pollub.javatablereservations.dto.ChangeReservationDto;
 import pl.pollub.javatablereservations.dto.CreateReservationDto;
 import pl.pollub.javatablereservations.entity.Reservation;
+import pl.pollub.javatablereservations.entity.Table;
 import pl.pollub.javatablereservations.service.ReservationService;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitor;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitorImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,5 +59,13 @@ public class ReservationController {
     @PostMapping(value = "/reject_reservation")
     public void rejectReservation(ChangeReservationDto changeReservationDto) {
         this.reservationService.updateReservationStatus(changeReservationDto, Constants.STATUS_API_NAME_RES_CAN);
+    }
+
+    @PostMapping(value = "synchronize_reservations")
+    public void synchronize() {
+        SynchronizationVisitor visitor = new SynchronizationVisitorImpl();
+        for (Reservation reservation : this.reservationService.getAllReservations()) {
+            reservation.accept(visitor);
+        }
     }
 }

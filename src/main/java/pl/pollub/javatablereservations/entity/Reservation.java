@@ -1,12 +1,14 @@
 package pl.pollub.javatablereservations.entity;
 
 import jakarta.persistence.*;
+import pl.pollub.javatablereservations.visitor.SynchronizationItem;
+import pl.pollub.javatablereservations.visitor.SynchronizationVisitor;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-public class Reservation {
+public class Reservation implements SynchronizationItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,5 +61,10 @@ public class Reservation {
 
     public Status getStatus() {
         return status;
+    }
+
+    @Override
+    public void accept(SynchronizationVisitor visitor) {
+        visitor.synchronize(this);
     }
 }

@@ -27,7 +27,7 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public void saveUser(CreateUserDto createUserDto) {
+    public User saveUser(CreateUserDto createUserDto) {
         User user = new User(
                 createUserDto.getLogin(),
                 createUserDto.getPassword(),
@@ -38,6 +38,7 @@ public class UserService {
         );
 
         this.userRepository.save(user);
+        return user;
     }
 
     public Optional<User> getUser(LoginDto loginDto) {
