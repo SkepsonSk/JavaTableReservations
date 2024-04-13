@@ -1,6 +1,7 @@
 package pl.pollub.javatablereservations.entity;
 
 import jakarta.persistence.*;
+import pl.pollub.javatablereservations.memento.TableMemento;
 
 import java.util.UUID;
 
@@ -42,5 +43,18 @@ public class Table {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public TableMemento createMemento() {
+        return new TableMemento(
+                this.id,
+                this.seats,
+                this.status.getId()
+        );
+    }
+
+    public void restoreFromMemento(TableMemento memento) {
+        this.seats = memento.getSeats();
+        this.status = new Status(memento.getStatus());
     }
 }

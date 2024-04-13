@@ -2,8 +2,11 @@ package pl.pollub.javatablereservations.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pl.pollub.javatablereservations.command.CreateUserCommand;
 import pl.pollub.javatablereservations.dto.CreateUserDto;
 import pl.pollub.javatablereservations.entity.User;
+import pl.pollub.javatablereservations.iterator.Iterator;
+import pl.pollub.javatablereservations.iterator.UserOrganization;
 import pl.pollub.javatablereservations.service.UserService;
 
 import java.util.List;
@@ -24,9 +27,16 @@ public class UserController {
         return this.userService.getUsers();
     }
 
+    @GetMapping(value = "/users/iterator")
+    public User getUsersIterator() {
+        Iterator<User> iterator = new UserOrganization(this.userService.getUsers()).createIterator();
+        return iterator.next();
+    }
+
     @PostMapping(value = "/create_user")
     public void createUser(@RequestBody CreateUserDto createUserDto) {
-        this.userService.saveUser(createUserDto);
+        CreateUserCommand command = new CreateUserCommand(this.userService, createUserDto);
+        command.execute();
     }
 
     @PostMapping(value = "/edit_user")

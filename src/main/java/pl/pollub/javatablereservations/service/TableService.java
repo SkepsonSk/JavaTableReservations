@@ -9,9 +9,12 @@ import pl.pollub.javatablereservations.dto.UpdateTableDto;
 import pl.pollub.javatablereservations.entity.Status;
 import pl.pollub.javatablereservations.entity.Table;
 import pl.pollub.javatablereservations.entity.builder.TableBuilder;
+import pl.pollub.javatablereservations.memento.TableHistory;
+import pl.pollub.javatablereservations.memento.TableMemento;
 import pl.pollub.javatablereservations.repository.StatusRepository;
 import pl.pollub.javatablereservations.repository.TableRepository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -84,4 +87,23 @@ public class TableService {
         this.tableRepository.save(table);
     }
 
+    public void createMemento() {
+        List<TableMemento> tableMementos = new ArrayList<>();
+        for (Table table : this.tableRepository.findAll()) {
+            tableMementos.add(table.createMemento());
+        }
+        TableHistory.getInstance().addMemento(tableMementos);
+    }
+
+    public void restoreFromMemento(int versionIndex) {
+        List<TableMemento> tableMementoList = TableHistory.getInstance().getMementos(versionIndex);
+        for (Table table : this.tableRepository.findAll()) {
+            for (TableMemento tableMemento : tableMementoList) {
+                if (tableMemento.getId().equals(table.getId())) {
+                    table.restoreFromMemento(tableMemento);
+                    break;
+                }
+            }
+        }
+    }
 }

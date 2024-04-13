@@ -6,21 +6,31 @@ import pl.pollub.javatablereservations.dto.ChangeTableDto;
 import pl.pollub.javatablereservations.dto.NewTableDto;
 import pl.pollub.javatablereservations.dto.UpdateTableDto;
 import pl.pollub.javatablereservations.entity.Table;
+import pl.pollub.javatablereservations.entity.User;
+import pl.pollub.javatablereservations.mediator.UserAccessMediator;
+import pl.pollub.javatablereservations.service.AuthService;
 import pl.pollub.javatablereservations.service.TableService;
+import pl.pollub.javatablereservations.service.UserService;
+import pl.pollub.javatablereservations.session.Session;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
 public class TableController {
 
     private final TableService tableService;
+    private final AuthService authService;
+    private final UserService userService;
 
     @Autowired
-    public TableController(TableService tableService) {
+    public TableController(TableService tableService, AuthService authService, UserService userService) {
         this.tableService = tableService;
+        this.authService = authService;
+        this.userService = userService;
     }
 
     @GetMapping(value = "tables")
@@ -44,8 +54,16 @@ public class TableController {
     }
 
     @PostMapping(value = "new_table")
-    public void newTable(@RequestBody NewTableDto table) {
-        this.tableService.newTable(table);
+    public void newTable(@RequestHeader("Authorization") String sessionId, @RequestBody NewTableDto table) {
+        Session session = this.authService.getSession(UUID.fromString(sessionId)).orElseThrow();
+        User user = this.userService.getUser(session.getUserId()).orElseThrow();
+
+        Boolean accessible = new UserAccessMediator().mediateAccess(user, "edit");
+        if (accessible) {
+            this.tableService.newTable(table);
+        } else {
+            throw new IllegalStateException("No access");
+        }
     }
 
     @PostMapping(value = "open_table")
@@ -61,5 +79,15 @@ public class TableController {
     @PostMapping(value = "edit_table")
     public void editTable(@RequestBody UpdateTableDto table) {
         this.tableService.editTable(table);
+    }
+
+    @PostMapping(value = "create_memento")
+    public void createMemento() {
+        this.tableService.createMemento();
+    }
+
+    @PostMapping(value = "restore_from_memento")
+    public void createMemento(@RequestParam("versionIndex") int versionIndex) {
+        this.tableService.restoreFromMemento(versionIndex);
     }
 }
