@@ -25,6 +25,10 @@ public class User {
     public User() {
     }
 
+    public User(UUID id) {
+        this.id = id;
+    }
+
     public User(String login, String password, String firstName, String lastName, Role role, Status status) {
         this.login = login;
         this.password = password;

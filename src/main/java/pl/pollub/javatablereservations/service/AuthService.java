@@ -47,4 +47,8 @@ public class AuthService {
         }
         return Optional.empty();
     }
+
+    public Optional<Session> getSession(UUID id) {
+        return Optional.of(this.sessionMapById.get(id));
+    }
 }
