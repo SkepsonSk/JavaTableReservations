@@ -3,10 +3,13 @@ package pl.pollub.javatablereservations.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.javatablereservations.Constants;
+import pl.pollub.javatablereservations.dependencyInversion.implementationClasses.OnlineReservationService;
+import pl.pollub.javatablereservations.dependencyInversion.implementationClasses.PhoneReservationService;
+import pl.pollub.javatablereservations.dependencyInversion.implementationClasses.WalkInReservationService;
 import pl.pollub.javatablereservations.dto.ChangeReservationDto;
 import pl.pollub.javatablereservations.dto.CreateReservationDto;
 import pl.pollub.javatablereservations.entity.Reservation;
-import pl.pollub.javatablereservations.entity.Table;
+import pl.pollub.javatablereservations.liskov.PhoneReservation;
 import pl.pollub.javatablereservations.service.ReservationService;
 import pl.pollub.javatablereservations.visitor.SynchronizationVisitor;
 import pl.pollub.javatablereservations.visitor.SynchronizationVisitorImpl;
@@ -67,5 +70,23 @@ public class ReservationController {
         for (Reservation reservation : this.reservationService.getAllReservations()) {
             reservation.accept(visitor);
         }
+    }
+
+    @PostMapping("/service/reservation/make/online")
+    public void makeOnlineReservation(@RequestBody CreateReservationDto createReservationDto) {
+        pl.pollub.javatablereservations.dependencyInversion.interfaces.ReservationService abstractReservationService = new OnlineReservationService(createReservationDto.getEmail());
+        abstractReservationService.makeReservation(createReservationDto.getTableId(), createReservationDto.getCustomerName());
+    }
+
+    @PostMapping("/service/reservation/make/walkin")
+    public void makeWalkInReservation(@RequestBody CreateReservationDto createReservationDto) {
+        pl.pollub.javatablereservations.dependencyInversion.interfaces.ReservationService abstractReservationService = new WalkInReservationService();
+        abstractReservationService.makeReservation(createReservationDto.getTableId(), createReservationDto.getCustomerName());
+    }
+
+    @PostMapping("/service/reservation/make/phone")
+    public void makePhoneReservation(@RequestBody CreateReservationDto createReservationDto) {
+        pl.pollub.javatablereservations.dependencyInversion.interfaces.ReservationService abstractReservationService = new PhoneReservationService(createReservationDto.getPhoneNumber());
+        abstractReservationService.makeReservation(createReservationDto.getTableId(), createReservationDto.getCustomerName());
     }
 }

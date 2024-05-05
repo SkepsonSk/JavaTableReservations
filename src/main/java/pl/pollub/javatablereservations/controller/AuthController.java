@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.pollub.javatablereservations.dto.LoginDto;
 import pl.pollub.javatablereservations.dto.LoginResponseDto;
 import pl.pollub.javatablereservations.dto.UserInfoDto;
+import pl.pollub.javatablereservations.exception.LoginException;
 import pl.pollub.javatablereservations.factory.ResponseFactory;
 import pl.pollub.javatablereservations.repository.UserRepository;
 import pl.pollub.javatablereservations.service.AuthService;
@@ -35,13 +36,13 @@ public class AuthController {
     }
 
     @PostMapping(value = "refresh")
-    public ResponseEntity<LoginResponseDto> refreshToken(@RequestHeader("Authorization") String sessionId) {
+    public ResponseEntity<LoginResponseDto> refreshToken(@RequestHeader("Authorization") String sessionId) throws LoginException {
         Optional<LoginResponseDto> loginResponseDto = this.authService.refreshToken(UUID.fromString(sessionId));
 
         if (loginResponseDto.isPresent()) {
             ResponseFactory.ok(loginResponseDto);
         }
-        return ResponseFactory.loginFailed();
+        throw new LoginException("Login failed");
     }
 
     @GetMapping(value = "userinfo")

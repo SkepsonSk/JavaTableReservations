@@ -11,6 +11,8 @@ public class CreateReservationDto {
     private String date;
     private String email;
     private int hour;
+    private String customerName;
+    private String phoneNumber;
 
     public UUID getTableId() {
         return tableId;
@@ -26,5 +28,13 @@ public class CreateReservationDto {
 
     public int getHour() {
         return hour;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }

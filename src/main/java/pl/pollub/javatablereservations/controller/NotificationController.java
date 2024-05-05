@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.pollub.javatablereservations.dependencyInversion.implementationClasses.EmailNotificationService;
+import pl.pollub.javatablereservations.dependencyInversion.interfaces.NotificationService;
 import pl.pollub.javatablereservations.dto.NotificationDto;
 import pl.pollub.javatablereservations.entity.User;
 import pl.pollub.javatablereservations.notification.DatabaseNotifier;
@@ -33,6 +35,12 @@ public class NotificationController {
         String body = notificationDto.getBody();
 
         notifier.doNotify(user, title, body);
+    }
+
+    @PostMapping(value = "/service/notify")
+    public void notifyUserUsingService(@RequestBody NotificationDto notificationDto) {
+        NotificationService notificationService = new EmailNotificationService();
+        notificationService.sendNotification(notificationDto.getTitle(), notificationDto.getBody(), notificationDto.getUserId());
     }
 
 }

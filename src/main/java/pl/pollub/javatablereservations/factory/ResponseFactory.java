@@ -9,7 +9,9 @@ public class ResponseFactory {
     }
 
     public static<T> ResponseEntity<T> loginFailed() {
-        return ResponseEntity.status(400).build();
+        throw new IllegalStateException("Login failed");
     }
+
+    public class LoginException extends Exception {}
 
 }
