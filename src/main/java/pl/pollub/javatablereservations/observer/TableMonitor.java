@@ -29,8 +29,6 @@ public class TableMonitor implements Subject<Table> {
 
     @Override
     public void notifyObservers(Table data) {
-        for (Observer<Table> observer : this.observers) {
-            observer.update(data);
-        }
+        this.observers.forEach(observer -> observer.update(data) );
     }
 }

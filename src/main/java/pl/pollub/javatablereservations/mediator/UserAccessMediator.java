@@ -1,6 +1,5 @@
 package pl.pollub.javatablereservations.mediator;
 
-import pl.pollub.javatablereservations.entity.Role;
 import pl.pollub.javatablereservations.entity.User;
 import pl.pollub.javatablereservations.strategy.CreateUserStrategy;
 import pl.pollub.javatablereservations.strategy.EditUserStrategy;
@@ -15,6 +14,7 @@ public class UserAccessMediator implements UserMediator {
     static {
         STRATEGY_BY_ACCESS.put("edit", new EditUserStrategy());
         STRATEGY_BY_ACCESS.put("create", new CreateUserStrategy());
+        STRATEGY_BY_ACCESS.put("create_user", user -> user.getRole().getName().equals("Moderator"));
     }
 
     @Override

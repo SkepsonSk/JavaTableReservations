@@ -24,6 +24,11 @@ public class Table implements SynchronizationItem {
 
     public Table() {}
 
+    public Table(int seats, Status status) {
+        this.seats = seats;
+        this.status = status;
+    }
+
     public Table(UUID id) {
         this.id = id;
     }
