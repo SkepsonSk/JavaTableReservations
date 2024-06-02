@@ -12,4 +12,8 @@ public class ChangeTableDto {
     public UUID getTableId() {
         return tableId;
     }
+
+    public void setTableId(UUID tableId) {
+        this.tableId = tableId;
+    }
 }

@@ -19,4 +19,16 @@ public class UpdateTableDto {
     public UUID getStatus() {
         return status;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public void setStatus(UUID status) {
+        this.status = status;
+    }
 }

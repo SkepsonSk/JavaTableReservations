@@ -14,4 +14,12 @@ public class NewTableDto {
     public UUID getStatus() {
         return status;
     }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public void setStatus(UUID status) {
+        this.status = status;
+    }
 }
