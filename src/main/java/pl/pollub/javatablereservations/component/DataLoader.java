@@ -3,6 +3,7 @@ package pl.pollub.javatablereservations.component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pollub.javatablereservations.Constants;
+import pl.pollub.javatablereservations.aspect.Measure;
 import pl.pollub.javatablereservations.entity.Status;
 import pl.pollub.javatablereservations.entity.Table;
 import pl.pollub.javatablereservations.repository.LogRepository;
@@ -31,6 +32,7 @@ public class DataLoader {
         this.tableRepository = tableRepository;
     }
 
+    @Measure
     public void seed() {
         DataSeeder dataSeeder = new DataSeeder();
         dataSeeder.addSeeder(new RoleSeeder(this.roleRepository));
